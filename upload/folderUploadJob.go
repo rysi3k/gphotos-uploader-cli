@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+        "strings"
+        "regexp"
 
 	"github.com/fatih/color"
 
@@ -67,6 +69,8 @@ func NewFolderUploadJob(configFolderUploadJob *config.FolderUploadJob, completed
 func authenticate(folderUploadJob *FolderUploadJob) (*gphotos.Client, error) {
 	// try to load token from keyring
 	token, err := tokenstore.TokenStore.RetrieveToken(folderUploadJob.Account)
+log.Println("Get token = ", token);
+log.Println("Error = ", err);
 	if err == nil && token != nil { // if error ignore and skip
 		// if found create client from token
 		gphotosClient, err := gphotos.NewClient(gphotos.FromToken(config.OAuthConfig(folderUploadJob.uploaderConfigAPICredentials), token))
@@ -112,6 +116,14 @@ func (folderUploadJob *FolderUploadJob) Upload() error {
 		if info.IsDir() {
 			return nil
 		}
+		relativePath := strings.Replace(filepath.Dir(filePath), folderAbsolutePath + "/", "", -1)
+
+		matched, err := regexp.MatchString(`^[0-9]+/`, relativePath)
+		if !matched {
+			fmt.Printf("skipping not matched file %s\n", filePath)
+			return nil
+		}
+
 		// process only files
 		if !filesystem.IsFile(filePath) {
 			return nil
@@ -151,10 +163,9 @@ func (folderUploadJob *FolderUploadJob) Upload() error {
 			gphotosClient:   folderUploadJob.gphotosClient.Client,
 		}
 		if folderUploadJob.MakeAlbums.Enabled && folderUploadJob.MakeAlbums.Use == USEFOLDERNAMES {
-			lastDirName := filepath.Base(filepath.Dir(filePath))
+			lastDirName := strings.Replace(relativePath[5:], "/", " | ", -1)
 			fileUpload.albumName = lastDirName
 		}
-
 		// finally, add the file upload to the queue
 		QueueFileUpload(fileUpload)
 

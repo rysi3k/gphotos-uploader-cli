@@ -3,10 +3,7 @@ package tokenstore
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"runtime"
 
-	"github.com/godbus/dbus"
 	keyring "github.com/zalando/go-keyring"
 	"golang.org/x/oauth2"
 )
@@ -24,16 +21,7 @@ type TokenStoreInterface interface {
 var TokenStore TokenStoreInterface
 
 func KeyRingSupported() bool {
-	if runtime.GOOS == "linux" {
-		// test dbus connection
-		_, err := dbus.SessionBus()
-		if err != nil {
-			log.Print("No Dbus support")
-			return false
-		}
-	}
-	log.Print("Keyring is supported")
-	return true
+	return false
 }
 
 var (

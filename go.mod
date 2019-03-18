@@ -7,7 +7,7 @@ require (
 	github.com/client9/xson v0.0.0-20180321172152-0e50cdfc08c0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.7.0
-	github.com/godbus/dbus v4.1.0+incompatible // indirect
+	github.com/godbus/dbus v4.1.0+incompatible
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
 	github.com/hashicorp/go-multierror v1.0.0 // indirect
 	github.com/juju/errors v0.0.0-20190207033735-e65537c515d7

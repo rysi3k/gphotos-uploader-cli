@@ -33,6 +33,7 @@ func (t TokenLevelDB) RetrieveToken(user string) (*oauth2.Token, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed unmarshaling token: %v", err)
 	}
+	log.Printf("Retrived token %s", token)
 	// validate token
 	if !token.Valid() {
 		return nil, ErrInvalidToken
@@ -51,6 +52,7 @@ func (t TokenLevelDB) StoreToken(user string, token *oauth2.Token) error {
 	err = t.DB.Put(keyFor(user), tokenJSONBytes, nil)
 
 	if err != nil {
+		log.Printf("store problem token: %s", err)
 		return err
 	}
 	log.Printf("stored token for user: %s", user)
