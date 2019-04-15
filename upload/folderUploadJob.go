@@ -106,16 +106,24 @@ func (folderUploadJob *FolderUploadJob) Upload(fileUploadsChan chan *FileUpload)
 			return nil
 		}
 
+		relativePath := strings.Replace(filepath.Dir(filePath), folderAbsolutePath + "/", "", -1)
+
+ 		matched, err := regexp.MatchString(`^[0-9]+/`, relativePath)
+		if !matched {
+			log.Printf("skipping not matched file %s\n", filePath)
+			return nil
+		}
+
 		// process only files
 		if filesystem.IsFile(filePath) {
 			// process only if filetype is image or video
 			if folderUploadJob.UploadVideos {
 				if !fileshandling.IsMedia(filePath) {
-					fmt.Printf("not a supported image or video: %s: skipping file...\n", filePath)
+					log.Printf("not a supported image or video: %s: skipping file...\n", filePath)
 					return nil
 				}
 			} else if !fileshandling.IsImage(filePath) {
-				fmt.Printf("not a supported image: %s: skipping file...\n", filePath)
+				log.Printf("not a supported image: %s: skipping file...\n", filePath)
 				return nil
 			}
 
@@ -124,7 +132,7 @@ func (folderUploadJob *FolderUploadJob) Upload(fileUploadsChan chan *FileUpload)
 			if err != nil {
 				log.Println(err)
 			} else if isAlreadyUploaded {
-				fmt.Printf("previously uploaded: %s: skipping file...\n", filePath)
+				// log.Printf("previously uploaded: %s: skipping file...\n", filePath)
 				return nil
 			}
 
@@ -135,7 +143,7 @@ func (folderUploadJob *FolderUploadJob) Upload(fileUploadsChan chan *FileUpload)
 				gphotosClient:   folderUploadJob.gphotosClient.Client,
 			}
 			if folderUploadJob.MakeAlbums.Enabled && folderUploadJob.MakeAlbums.Use == USEFOLDERNAMES {
-				lastDirName := filepath.Base(filepath.Dir(filePath))
+				lastDirName := strings.Replace(relativePath[5:], "/", " | ", -1)
 				fileUpload.albumName = lastDirName
 			}
 

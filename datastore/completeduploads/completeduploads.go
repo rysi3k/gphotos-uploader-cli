@@ -150,7 +150,7 @@ func (s *CompletedUploadsService) StoreToken(user string, token *oauth2.Token) e
 		log.Printf("error marshalling token")
 		return err
 	}
-
+	log.Printf("oauth token to store: %s", token)
 	err = s.db.Put([]byte(fmt.Sprintf("%s_%s", "credential", user)), tokenJSONBytes, nil)
 
 	if err != nil {
