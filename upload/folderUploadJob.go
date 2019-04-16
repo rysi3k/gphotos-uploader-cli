@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+    "strings"
+    "regexp"
 
 	"github.com/fatih/color"
 	"github.com/palantir/stacktrace"

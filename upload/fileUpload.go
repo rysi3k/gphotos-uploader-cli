@@ -13,7 +13,7 @@ var (
 )
 
 // number of concurrent uploads
-const uploadConcurrency = 5
+const uploadConcurrency = 3
 
 type FileUpload struct {
 	*FolderUploadJob
